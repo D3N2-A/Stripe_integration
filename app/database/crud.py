@@ -22,5 +22,21 @@ def create_customer(data: customer.CustomerBase, db: Session):
 # Function for deleting customer
 def delete_customer(id: str, db: Session):
     db_customer = db.query(Customer).filter(Customer.id == id).first()
-    db.delete(db_customer)
-    db.commit()
+    if db_customer:
+        db.delete(db_customer)
+        db.commit()
+        return 'done'
+
+
+# Function for updating customer
+def update_customer(data: customer.CustomerUpdate, db: Session):
+    db_customer = db.query(Customer).filter(Customer.id == data['id']).first()
+    if db_customer:
+        if data['name']:
+            db_customer.name = data['name']
+        if data['email']:
+            db_customer.email = data['email']
+        db.commit()
+        return db_customer
+    else:
+        return None

@@ -24,7 +24,7 @@ def root():
 # Endpoint for Retrieving List of All customers
 
 
-@app.get("/get_user", response_model=list[customer.CustomerBase])
+@app.get("/customers", response_model=list[customer.CustomerBase])
 def get_customers(db: Session = Depends(get_db)):
 
     users = crud.get_all_customers(db)
@@ -37,22 +37,43 @@ def get_customers(db: Session = Depends(get_db)):
 # Endpoint for Creating customer
 
 
-@app.post("/create_user")
+@app.post("/customer", status_code=201)
 def create_customer(payload: customer.CustomerBase,
                     db: Session = Depends(get_db)):
-    user = crud.create_user(payload.dict(), db)
-    if user:
-        return user
+    customer = crud.create_customer(payload.dict(), db)
+    if customer:
+        return customer
     else:
-        raise HTTPException(status_code=404, detail="Something went Bad")
+        raise HTTPException(status_code=404, detail="Invalid Format")
 
 
 # Endpoint for Deleting customer
 
 
-@app.delete("/delete_user", status_code=200)
+@app.delete("/customer", status_code=200)
 def delete_customer(payload: customer.DeleteCustomer,
                     db: Session = Depends(get_db)):
     id = payload.dict()['id']
-    crud.delete_customer(id, db)
-    return Response(status_code=200)
+    task = crud.delete_customer(id, db)
+    if task == 'done':
+        return Response(status_code=200)
+    else:
+        raise HTTPException(
+            status_code=404, detail="Customer with id not found")
+
+# Endpoint for Updating customer
+
+
+@app.put("/customer", status_code=200)
+def update_customer(payload: customer.CustomerUpdate,
+                    db: Session = Depends(get_db)):
+    updated_customer = crud.update_customer(payload.dict(), db)
+    if updated_customer:
+        return updated_customer.__dict__
+    else:
+        raise HTTPException(status_code=404, detail="Not Found")
+
+
+# Webhook for recieving Stripe events
+
+# @app.webhooks.post("/")

@@ -12,3 +12,9 @@ class CustomerBase(BaseModel):
 
 class DeleteCustomer(BaseModel):
     id: str
+
+
+class CustomerUpdate(BaseModel):
+    id: str
+    name: str | None = None
+    email: str | None = None
