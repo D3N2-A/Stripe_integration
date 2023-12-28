@@ -6,3 +6,9 @@ def get_all_customers(db: Session):
     users = db.query(Customer).all()
     print(users)
     return users
+
+
+def create_user(data, db: Session):
+    users = db.query(Customer).all()
+    print(users)
+    return users

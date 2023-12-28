@@ -30,3 +30,13 @@ def get_user(db: Session = Depends(get_db)):
         return users
     else:
         raise HTTPException(status_code=404, detail="Not Found")
+
+
+@app.post("/create_user", response_model=list[customer.CustomerBase])
+def create_user(payload: customer.CustomerBase, db: Session = Depends(get_db)):
+
+    users = crud.create_user(payload.dict(), db)
+    if users:
+        return users
+    else:
+        raise HTTPException(status_code=404, detail="Not Found")
