@@ -8,3 +8,7 @@ class CustomerBase(BaseModel):
 
     class Config:
         orm_mode = True
+
+
+class DeleteCustomer(BaseModel):
+    id: str

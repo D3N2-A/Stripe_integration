@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Depends, HTTPException
+from fastapi import FastAPI, Depends, HTTPException, Response
 from sqlalchemy.orm import Session
 from .schemas import customer
 from .database import database, crud
@@ -23,7 +23,7 @@ def root():
 
 
 @app.get("/get_user", response_model=list[customer.CustomerBase])
-def get_user(db: Session = Depends(get_db)):
+def get_customers(db: Session = Depends(get_db)):
 
     users = crud.get_all_customers(db)
     if users:
@@ -32,11 +32,19 @@ def get_user(db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Not Found")
 
 
-@app.post("/create_user", response_model=list[customer.CustomerBase])
-def create_user(payload: customer.CustomerBase, db: Session = Depends(get_db)):
-
-    users = crud.create_user(payload.dict(), db)
-    if users:
-        return users
+@app.post("/create_user")
+def create_customer(payload: customer.CustomerBase,
+                    db: Session = Depends(get_db)):
+    user = crud.create_user(payload.dict(), db)
+    if user:
+        return user
     else:
-        raise HTTPException(status_code=404, detail="Not Found")
+        raise HTTPException(status_code=404, detail="Something went Bad")
+
+
+@app.delete("/delete_user", status_code=200)
+def delete_customer(payload: customer.DeleteCustomer,
+                    db: Session = Depends(get_db)):
+    id = payload.dict()['id']
+    crud.delete_customer(id, db)
+    return Response(status_code=200)
