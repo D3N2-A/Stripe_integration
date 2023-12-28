@@ -46,6 +46,13 @@ Install Dependencies
   pip install -r requirements.txt
 ```
 
+Run Docker to start kafka broker
+
+```bash
+ cd docker
+ docker compose up -d
+```
+
 ## Kafka Usage
 
 In this Project kafka is setup in such a way that we can incorporate different integration in future if needed such as salesforce customer catalog. We can create a topic which is subscribed by consumer and that is polled at a interval. Producer can publish message to any topic. For scaling, we can partition a topic or we can create a kafka cluster each one catering to different integration.
