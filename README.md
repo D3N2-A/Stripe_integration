@@ -19,7 +19,7 @@ Clone the project
 Create local env and activate it
 
 ```bash
-  python3 -m venv .venv
+  python -m venv .venv
 ```
 
 - For Windows
