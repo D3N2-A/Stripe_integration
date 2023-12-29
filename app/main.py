@@ -1,6 +1,6 @@
 from fastapi import FastAPI, Depends, HTTPException, Response, Request
 from sqlalchemy.orm import Session
-from .schemas import customer, kafka_event
+from .schemas import customer
 from .database import database, crud
 from .queue import kafka_producer
 from .utils import serialization
@@ -96,13 +96,19 @@ def update_customer(payload: customer.CustomerUpdate,
 # Webhook for recieving Stripe events
 
 @app.post("/webhooks/stripe")
-async def webhook(request: Request):
+async def webhook(request: Request, db: Session = Depends(get_db)):
     event = None
     event = await request.json()
     data = event['data']
 
     if event['type'] == 'customer.created':
-        customer_data = customer.CustomerBase(**data['object'])
+        customer_data = customer.CustomerBase(**data['object']).dict()
+        db_customer = crud.create_customer(customer_data, db)
+        if db_customer == "Found":
+            raise HTTPException(
+                status_code=404, detail="Customer ALready Exists")
+        else:
+            print('Customer created with')
     elif event['type'] == 'customer.deleted':
         customer_data = customer.CustomerBase(**data['object'])
     elif event['type'] == 'customer.updated':
