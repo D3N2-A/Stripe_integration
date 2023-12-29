@@ -42,7 +42,7 @@ def message_handler(msg):
             stripe.Customer.modify(msg['id'],
                                    **customer_data
                                    )
-            print(f"Customer {msg['id']} deleted on stripe")
+            print(f"Customer {msg['id']} edited on stripe")
         except Exception as e:
             print(f"Error Occured: {str(e)}")
 

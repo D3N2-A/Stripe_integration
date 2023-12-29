@@ -110,9 +110,19 @@ async def webhook(request: Request, db: Session = Depends(get_db)):
         else:
             print('Customer created with')
     elif event['type'] == 'customer.deleted':
-        customer_data = customer.CustomerBase(**data['object'])
+        customer_data = customer.DeleteCustomer(**data['object']).dict()
+        id = customer_data['id']
+        task = crud.delete_customer(id, db)
+        if task == 'done':
+            print(f'Customer Deleted with {id}')
+        else:
+            print('something went wrong')
     elif event['type'] == 'customer.updated':
-        customer_data = customer.CustomerBase(**data['object'])
+        customer_data = customer.CustomerUpdate(**data['object']).dict()
+        id = customer_data['id']
+        updated_customer = crud.update_customer(customer_data, db)
+        if updated_customer:
+            print(f'Updated Customer with id {id}')
 
     else:
         print('Unhandled event type {}'.format(event['type']))

@@ -18,3 +18,6 @@ class CustomerUpdate(BaseModel):
     id: str
     name: str | None = None
     email: str | None = None
+
+    class Config:
+        orm_mode = True
