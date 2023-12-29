@@ -16,7 +16,7 @@ consumer = Consumer({
 # Polling Loop
 
 # Subscribing to Stripe Topic
-consumer.subscribe(['customer_events'])
+consumer.subscribe(['stripe'])
 
 running = True
 

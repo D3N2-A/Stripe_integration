@@ -1,10 +1,10 @@
-from fastapi import FastAPI, Depends, HTTPException, Response
+from fastapi import FastAPI, Depends, HTTPException, Response, Request
 from sqlalchemy.orm import Session
 from .schemas import customer
 from .database import database, crud
 
-
 app = FastAPI()
+
 
 # Database dependency
 
@@ -76,4 +76,20 @@ def update_customer(payload: customer.CustomerUpdate,
 
 # Webhook for recieving Stripe events
 
-# @app.webhooks.post("/")
+@app.post("/webhooks/stripe")
+async def webhook(request: Request):
+    event = None
+    event = await request.json()
+    data = event['data']
+
+    if event['type'] == 'customer.created':
+        customer1 = customer.CustomerBase(**data['object'])
+    elif event['type'] == 'customer.deleted':
+        customer1 = customer.CustomerBase(**data['object'])
+    elif event['type'] == 'customer.updated':
+        customer1 = customer.CustomerBase(**data['object'])
+
+    else:
+        print('Unhandled event type {}'.format(event['type']))
+    print(customer1)
+    return {"True"}

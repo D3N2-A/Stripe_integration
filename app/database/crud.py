@@ -8,6 +8,14 @@ def get_all_customers(db: Session):
     users = db.query(Customer).all()
     return users
 
+# Function for retrieving Customer by email
+
+
+def get_customer_email(data, db: Session):
+    email = data['email']
+    user = db.query(Customer).filter(Customer.email == email)
+    return user
+
 
 # Function for creating customers
 def create_customer(data: customer.CustomerBase, db: Session):
