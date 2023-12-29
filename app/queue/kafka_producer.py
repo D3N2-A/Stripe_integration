@@ -2,7 +2,7 @@ from confluent_kafka import Producer
 
 # Kafka Producer initialization
 producer = Producer({
-    'bootstrap.servers': 'localhost:9092'
+    'bootstrap.servers': 'localhost:29092'
 })
 
 # Function to publish message to queue

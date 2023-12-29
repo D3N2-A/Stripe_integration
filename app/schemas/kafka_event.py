@@ -13,4 +13,3 @@ class KafkaCreate(KafkaEventBase):
 
 class KafkaDelete(KafkaEventBase):
     id: str
-    pass

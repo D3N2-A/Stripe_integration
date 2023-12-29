@@ -1,5 +1,7 @@
 import stripe
-from confluent_kafka import Consumer, KafkaError, KafkaException
+from confluent_kafka import Consumer, KafkaError
+import json
+# from app.database.crud import create_customer
 
 # Global API Key
 stripe.api_key = "sk_test_51ORaXpSIi59A5pjv07dus87pBbIAKTvY2ohYLDfgol9" + \
@@ -7,13 +9,53 @@ stripe.api_key = "sk_test_51ORaXpSIi59A5pjv07dus87pBbIAKTvY2ohYLDfgol9" + \
 
 # Initialisation of Kafka Consumer
 consumer = Consumer({
-    'bootstrap.servers': 'localhost:9092',
+    'bootstrap.servers': 'localhost:29092',
     'group.id': 'worker',
-    'auto.offset.reset': 'earliest'
+    'auto.offset.reset': 'earliest',
+    "allow.auto.create.topics": "true",
 })
 
 
+# Message Handeling
+def message_handler(msg):
+    action = msg['action']
+
+    if action == "customer.created":
+        try:
+            stripe.Customer.create(
+                id=msg['id'],
+                name=msg['name'],
+                email=msg['email']
+            )
+            print(f"Customer {msg['id']} created on stripe")
+        except Exception as e:
+            print(f"Error Occured: {str(e)}")
+
+    elif action == "customer.updated":
+        try:
+            customer_data = {}
+            if 'email' in msg:
+                customer_data['email'] = msg['email']
+            if 'name' in msg:
+                customer_data['name'] = msg['name']
+
+            stripe.Customer.modify(msg['id'],
+                                   **customer_data
+                                   )
+            print(f"Customer {msg['id']} deleted on stripe")
+        except Exception as e:
+            print(f"Error Occured: {str(e)}")
+
+    elif action == "customer.deleted":
+        try:
+            stripe.Customer.delete(msg['id'])
+            print(f"Customer {msg['id']} deleted on stripe")
+        except Exception as e:
+            print(f"Error Occured: {str(e)}")
+
+
 # Polling Loop
+
 
 # Subscribing to Stripe Topic
 consumer.subscribe(['stripe'])
@@ -21,7 +63,7 @@ consumer.subscribe(['stripe'])
 running = True
 
 # Timeout for polling
-timeout = 2.0
+timeout = 1.0
 
 print('Started Polling')
 while running:
@@ -36,8 +78,10 @@ while running:
             print('%% %s [%d] reached end at offset %d\n' %
                   (msg.topic(), msg.partition(), msg.offset()))
         elif msg.error():
-            raise KafkaException(msg.error())
+            print(msg.error())
     else:
-        print(msg)
+        message_handler(json.loads(msg.value()))
+        # print(json.loads(msg.value()))
+    consumer.commit()
 
 consumer.close()

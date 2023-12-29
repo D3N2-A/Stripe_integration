@@ -11,20 +11,26 @@ def get_all_customers(db: Session):
 # Function for retrieving Customer by email
 
 
-def get_customer_email(data, db: Session):
-    email = data['email']
-    user = db.query(Customer).filter(Customer.email == email)
-    return user
+def get_customer_email(email: str, db: Session):
+    user = db.query(Customer).filter(Customer.email == email).first()
+    if user:
+        return user
+    else:
+        return None
 
 
 # Function for creating customers
 def create_customer(data: customer.CustomerBase, db: Session):
-    db_customer = Customer(
-        id=data['id'], name=data['name'], email=data['email'])
-    db.add(db_customer)
-    db.commit()
-    db.refresh(db_customer)
-    return db_customer
+    check_customer = get_customer_email(data['email'], db)
+    if check_customer:
+        return "Found"
+    else:
+        db_customer = Customer(
+            id=data['id'], name=data['name'], email=data['email'])
+        db.add(db_customer)
+        db.commit()
+        db.refresh(db_customer)
+        return db_customer
 
 
 # Function for deleting customer
