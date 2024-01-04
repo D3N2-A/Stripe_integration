@@ -25,6 +25,7 @@ def create_customer(data: customer.CustomerBase, db: Session):
     if check_customer:
         return "Found"
     else:
+        # TODO: Add rollback functionality and check for kafka server
         db_customer = Customer(
             id=data['id'], name=data['name'], email=data['email'])
         db.add(db_customer)
