@@ -56,3 +56,58 @@ Run Docker to start kafka broker
 ## Kafka Usage
 
 In this Project kafka is setup in such a way that we can incorporate different integration in future if needed such as salesforce customer catalog. We can create a topic which is subscribed by consumer and that is polled at a interval. Producer can publish message to any topic. For scaling, we can partition a topic or we can create a kafka cluster each one catering to different integration.
+
+## API Usage
+
+#### Get all customers
+
+```http
+  GET /customers
+```
+
+| Parameter | Type | Description |
+| :-------- | :--- | :---------- |
+| `None`    | ``   |             |
+
+#### Get customer
+
+```http
+  GET /customer/${id}
+```
+
+| Parameter | Type     | Description                  |
+| :-------- | :------- | :--------------------------- |
+| `id`      | `string` | **Required**. Id of customer |
+
+#### Create customer
+
+```http
+  POST /customer
+```
+
+| Body Parameter | Type     | Description                     |
+| :------------- | :------- | :------------------------------ |
+| `name`         | `string` | **Required**. Name of customer  |
+| `email`        | `string` | **Required**. Email of customer |
+
+#### Update customer
+
+```http
+  Delete /customer
+```
+
+| Body Parameter | Type     | Description                     |
+| :------------- | :------- | :------------------------------ |
+| `id`           | `string` | **Required**. Id of customer    |
+| `name`         | `string` | **Optional**. Name of customer  |
+| `email`        | `string` | **Optional**. Email of customer |
+
+#### Delete customer
+
+```http
+  Delete /customer
+```
+
+| Body Parameter | Type     | Description                     |
+| :------------- | :------- | :------------------------------ |
+| `id`           | `string` | **Required**. Email of customer |
