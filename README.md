@@ -1,6 +1,6 @@
 # Stripe Two Way Integration
 
-The objective of this assignment is to simulate a product that has a simple
+The objective of this project is to simulate a product that has a simple
 customer catalog (think of it as a simple customer table) and build a two-way integration with a
 customer catalog in an external service - Stripe in this case. The two-way sync is supposed to be near
 real-time so that a customer added/edited on one system propagates to the other system within
